@@ -1,4 +1,4 @@
-using System;
+using System.IO;
 using Xunit;
 
 namespace CompressThis.Tests
@@ -12,7 +12,7 @@ namespace CompressThis.Tests
 
             var service = CreateService(-1);
 
-            Assert.Throws<InvalidOperationException>(() =>
+            Assert.Throws<InvalidDataException>(() =>
                 service.Decompress("input", "output"));
         }
         
@@ -28,7 +28,7 @@ namespace CompressThis.Tests
 
             var service = CreateService(-1);
 
-            Assert.Throws<InvalidOperationException>(() =>
+            Assert.Throws<InvalidDataException>(() =>
                 service.Decompress("input", "output"));
         }
         
@@ -46,7 +46,7 @@ namespace CompressThis.Tests
 
             var service = CreateService(-1);
 
-            Assert.Throws<InvalidOperationException>(() =>
+            Assert.Throws<InvalidDataException>(() =>
                 service.Decompress("input", "output"));
         }
         
@@ -63,7 +63,7 @@ namespace CompressThis.Tests
 
             var service = CreateService(-1);
 
-            Assert.Throws<InvalidOperationException>(() =>
+            Assert.Throws<InvalidDataException>(() =>
                 service.Decompress("input", "output"));
         }
     }

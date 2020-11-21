@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Text;
 using CompressThis.Models;
@@ -24,7 +23,7 @@ namespace CompressThis.Services
             using var binaryReader = new BinaryReader(stream, Encoding.UTF8, true);
             CheckBytesExist(stream, 4);
             var metaData = new CompressionMetaData(binaryReader.ReadInt32());
-            CheckBytesExist(stream, 4 * metaData.BlockSizes.Length);
+            CheckBytesExist(stream, (long) 4 * metaData.BlockSizes.Length);
             for (int i = 0; i < metaData.BlockSizes.Length; i++)
             {
                 metaData.BlockSizes[i] = binaryReader.ReadInt32();
@@ -33,10 +32,10 @@ namespace CompressThis.Services
             return metaData;
         }
 
-        private void CheckBytesExist(Stream stream, int bytesCount)
+        private void CheckBytesExist(Stream stream, long bytesCount)
         {
             if (stream.Length - stream.Position < bytesCount)
-                throw new InvalidOperationException(CompressionExceptionMessages.WrongFormat);
+                throw new InvalidDataException(CompressionExceptionMessages.WrongFormat);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using CompressThis.ArgumentsProcessing;
 using CompressThis.Compressors;
 using CompressThis.Models;
@@ -71,7 +72,7 @@ namespace CompressThis
                     ? compressor.Compress(arguments.InputFile, arguments.OutputFile)
                     : compressor.Decompress(arguments.InputFile, arguments.OutputFile);
             }
-            catch (InvalidOperationException e)
+            catch (InvalidDataException e)
             {
                 Ui.PrintRuntimeException(e);
                 return false;

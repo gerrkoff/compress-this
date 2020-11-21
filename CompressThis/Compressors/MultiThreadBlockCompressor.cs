@@ -74,7 +74,7 @@ namespace CompressThis.Compressors
                 var blockIndex = i;
                 var blockBytes = ReadBlockFromStream(inputFileStream, metaData.BlockSizes[i]);
                 if (blockBytes.Length != metaData.BlockSizes[i])
-                    throw new InvalidOperationException(CompressionExceptionMessages.WrongFormat);
+                    throw new InvalidDataException(CompressionExceptionMessages.WrongFormat);
                 _threadPool.Run(() => ProcessBlock(blockBytes, blockIndex, _compressService.Decompress));
             }
 
