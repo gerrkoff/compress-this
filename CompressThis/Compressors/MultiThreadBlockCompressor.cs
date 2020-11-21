@@ -34,8 +34,9 @@ namespace CompressThis.Compressors
             var metaData = new CompressionMetaData((int) Math.Ceiling((double) inputFileStream.Length / BlockSize));
 
             long outputFileSize = 0;
+            bool isSucceed = false;
             var writerThread =
-                _threadPool.RunDedicated(() => WriteCompressionToFile(outputFilePath, metaData, out outputFileSize));
+                _threadPool.RunDedicated(() => WriteCompressionToFile(outputFilePath, metaData, out outputFileSize, out isSucceed));
 
             for (int i = 0; i < metaData.BlockSizes.Length; i++)
             {
@@ -46,15 +47,18 @@ namespace CompressThis.Compressors
             }
 
             writerThread.Join();
+            
+            if (!isSucceed)
+                throw new InvalidDataException(CompressionExceptionMessages.UnknownCompressException);
 
             return new CompressionResult(inputFileStream.Length, outputFileSize) {MetaData = metaData};
         }
         
-        private void WriteCompressionToFile(string filePath, CompressionMetaData metaData, out long fileSize)
+        private void WriteCompressionToFile(string filePath, CompressionMetaData metaData, out long fileSize, out bool isSucceed)
         {
             using var fileStream = _fileService.Create(filePath);
             fileStream.Seek(metaData.MetaDataSize, SeekOrigin.Begin);
-            WriteBlocksToStream(fileStream, metaData.BlockSizes.Length);
+            isSucceed = WriteBlocksToStream(fileStream, metaData.BlockSizes.Length);
             _metaDataService.WriteToStream(fileStream, metaData);
             fileSize = fileStream.Length;
         }
@@ -66,8 +70,9 @@ namespace CompressThis.Compressors
             var metaData = _metaDataService.ReadFromStream(inputFileStream);
             
             long outputFileSize = 0;
+            bool isSucceed = false;
             var writerThread = _threadPool.RunDedicated(() =>
-                WriteDecompressionToFile(outputFilePath, metaData, out outputFileSize));
+                WriteDecompressionToFile(outputFilePath, metaData, out outputFileSize, out isSucceed));
 
             for (int i = 0; i < metaData.BlockSizes.Length; i++)
             {
@@ -79,18 +84,21 @@ namespace CompressThis.Compressors
             }
 
             writerThread.Join();
+            
+            if (!isSucceed)
+                throw new InvalidDataException(CompressionExceptionMessages.WrongFormat);
 
             return new CompressionResult(inputFileStream.Length, outputFileSize) {MetaData = metaData};
         }
         
-        private void WriteDecompressionToFile(string filePath, CompressionMetaData metaData, out long fileSize)
+        private void WriteDecompressionToFile(string filePath, CompressionMetaData metaData, out long fileSize, out bool isSucceed)
         {
             using var fileStream = _fileService.Create(filePath);
-            WriteBlocksToStream(fileStream, metaData.BlockSizes.Length);
+            isSucceed = WriteBlocksToStream(fileStream, metaData.BlockSizes.Length);
             fileSize = fileStream.Length;
         }
         
-        private void WriteBlocksToStream(Stream output, int totalBlockCount)
+        private bool WriteBlocksToStream(Stream output, int totalBlockCount)
         {
             lock (_processedBlocks)
             {
@@ -103,23 +111,34 @@ namespace CompressThis.Compressors
                         continue;
                     }
 
+                    if (_processedBlocks[blockCount] == null)
+                        return false;
+
                     output.Write(_processedBlocks[blockCount], 0, _processedBlocks[blockCount].Length);
                     _processedBlocks.Remove(blockCount);
                     blockCount++;
                     OnProgressUpdated(blockCount, totalBlockCount);
                 }
             }
+
+            return true;
         }
         
         private void ProcessBlock(byte[] block, int blockIndex, Func<byte[], byte[]> process, int[] blockSizesToSave = null)
         {
-            var compressedBlock = process(block);
-            if (blockSizesToSave != null)
-                blockSizesToSave[blockIndex] = compressedBlock.Length;
+            byte[] processedBlock = null;
+            try
+            {
+                processedBlock = process(block);
+            }
+            catch (InvalidDataException) {}
+
+            if (blockSizesToSave != null && processedBlock != null)
+                blockSizesToSave[blockIndex] = processedBlock.Length;
 
             lock (_processedBlocks)
             {
-                _processedBlocks.Add(blockIndex, compressedBlock);
+                _processedBlocks.Add(blockIndex, processedBlock);
                 Monitor.Pulse(_processedBlocks);
             }
         }
