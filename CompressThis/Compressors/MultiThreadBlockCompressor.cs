@@ -25,7 +25,7 @@ namespace CompressThis.Compressors
             _threadPool = threadPool;
         }
 
-        public int BlockSize { get; set; } = 1;//024 * 1024;
+        public int BlockSize { get; set; } = 1024 * 1024;
         public event EventHandler<ProgressUpdatedEventArgs> ProgressUpdated;
 
         public CompressionResult Compress(string inputFilePath, string outputFilePath)
