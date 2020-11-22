@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-# base64 /dev/urandom | head -c 10000000 > big.txt
-
-#FILE="track.mp3"
-#FILE="main.js"
 #FILE="big10.txt"
 #FILE="big100.txt"
 FILE="big1000.txt"
@@ -13,7 +9,7 @@ FILE="big1000.txt"
 APP="test/build/CompressThis.dll"
 ORIGINAL="test/$FILE"
 COMPRESSED="test/$FILE.gz"
-DECOMPRESSED="test/$FILE.decompressed"
+DECOMPRESSED="test/$FILE.d"
 
 ./test-build.sh || exit $?
 

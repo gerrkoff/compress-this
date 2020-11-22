@@ -74,6 +74,7 @@ namespace CompressThis.Ui
             Console.WriteLine("  -s\t\t\tSingle Thread Mode");
             Console.WriteLine("  -v\t\t\tVerbose");
             Console.WriteLine("  --block-size [VALUE]\tBlock Size");
+            Console.WriteLine();
         }
     }
 }

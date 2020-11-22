@@ -106,5 +106,20 @@ namespace CompressThis.Tests
             Assert.Throws<InvalidDataException>(() =>
                 service.Compress("input", "output"));
         }
+        
+        [Fact]
+        public void Test_Exception_DecompressWrongBlockSizes()
+        {
+            SetupInputFile(new byte[]
+            {
+                1, 0, 0, 0, // block count
+                0, 0, 0, 0, // 1 block size
+            });
+
+            var service = CreateService(-1);
+
+            var q = Assert.Throws<InvalidDataException>(() =>
+                service.Decompress("input", "output")).Message;
+        }
     }
 }

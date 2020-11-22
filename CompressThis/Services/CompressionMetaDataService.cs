@@ -26,7 +26,10 @@ namespace CompressThis.Services
             CheckBytesExist(stream, (long) 4 * metaData.BlockSizes.Length);
             for (int i = 0; i < metaData.BlockSizes.Length; i++)
             {
-                metaData.BlockSizes[i] = binaryReader.ReadInt32();
+                var value = binaryReader.ReadInt32();
+                if (value < 1)
+                    throw new InvalidDataException(CompressionExceptionMessages.WrongFormat);
+                metaData.BlockSizes[i] = value;
             }
 
             return metaData;
