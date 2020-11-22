@@ -71,8 +71,9 @@ namespace CompressThis.Ui
             Console.WriteLine("Using: app [compress|decompress] [path-to-input-file] [path-to-output-file] [options]");
             Console.WriteLine();
             Console.WriteLine("options:");
-            Console.WriteLine("  -s\tSingle Thread Mode");
-            Console.WriteLine("  -v\tVerbose");
+            Console.WriteLine("  -s\t\t\tSingle Thread Mode");
+            Console.WriteLine("  -v\t\t\tVerbose");
+            Console.WriteLine("  --block-size [VALUE]\tBlock Size");
         }
     }
 }
