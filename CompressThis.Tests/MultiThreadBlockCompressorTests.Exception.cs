@@ -95,5 +95,16 @@ namespace CompressThis.Tests
             Assert.Throws<InvalidDataException>(() =>
                 service.Compress("input", "output"));
         }
+        
+        [Fact]
+        public void Test_Exception_CompressTooManyBlocks()
+        {
+            SetupInputFile(new byte[2146435072]);
+
+            var service = CreateService(1);
+
+            Assert.Throws<InvalidDataException>(() =>
+                service.Compress("input", "output"));
+        }
     }
 }

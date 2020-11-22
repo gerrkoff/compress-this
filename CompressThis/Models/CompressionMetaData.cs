@@ -11,7 +11,7 @@ namespace CompressThis.Models
 
         public int[] BlockSizes { get; }
 
-        public int MetaDataSize => BlockSizes.Length * 4 + 4;
+        public long MetaDataSize => (long) BlockSizes.Length * 4 + 4;
 
         public override string ToString()
         {

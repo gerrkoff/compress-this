@@ -31,11 +31,13 @@ namespace CompressThis.Services
 
             return metaData;
         }
-
+        
+        // ReSharper disable ParameterOnlyUsedForPreconditionCheck.Local
         private void CheckBytesExist(Stream stream, long bytesCount)
         {
             if (stream.Length - stream.Position < bytesCount)
                 throw new InvalidDataException(CompressionExceptionMessages.WrongFormat);
         }
+        // ReSharper restore ParameterOnlyUsedForPreconditionCheck.Local
     }
 }

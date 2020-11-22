@@ -40,6 +40,13 @@ namespace CompressThis.ArgumentsProcessing
                     arguments.IsSingleThread = true;
                 else if (string.Equals(args[i], "-v"))
                     arguments.IsVerbose = true;
+                else if (string.Equals(args[i], "--block-size"))
+                {
+                    if (i + 1 == args.Length || !int.TryParse(args[i + 1], out int blockSize))
+                        throw new ArgumentException("Block size value is expected");
+
+                    arguments.BlockSize = blockSize;
+                }
             }
 
             return arguments;

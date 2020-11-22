@@ -7,5 +7,6 @@ namespace CompressThis.ArgumentsProcessing
         public bool IsCompressMode { get; set; }
         public bool IsVerbose { get; set; }
         public bool IsSingleThread { get; set; }
+        public int? BlockSize { get; set; }
     }
 }

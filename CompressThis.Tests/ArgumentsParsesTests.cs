@@ -142,5 +142,47 @@ namespace CompressThis.Tests
             
             Assert.Throws<ArgumentException>(() => service.Parse(args));
         }
+        
+        [Fact]
+        public void Test_ParseBlockSize_NoValueProvided()
+        {
+            var args = new[] { "compress", "input", "output", "--block-size" };
+            
+            var service = new ArgumentsParser(_fileService.Object);
+            
+            Assert.Throws<ArgumentException>(() => service.Parse(args));
+        }
+        
+        [Fact]
+        public void Test_ParseBlockSize_CannotParseValue()
+        {
+            var args = new[] { "compress", "input", "output", "--block-size", "qqq" };
+            
+            var service = new ArgumentsParser(_fileService.Object);
+            
+            Assert.Throws<ArgumentException>(() => service.Parse(args));
+        }
+        
+        [Fact]
+        public void Test_ParseBlockSize_Positive()
+        {
+            var args = new[] { "compress", "input", "output", "--block-size", "10485760" };
+            
+            var service = new ArgumentsParser(_fileService.Object);
+            var result = service.Parse(args);
+            
+            Assert.Equal(10485760, result.BlockSize);
+        }
+        
+        [Fact]
+        public void Test_ParseBlockSize_NoValue()
+        {
+            var args = new[] { "compress", "input", "output" };
+            
+            var service = new ArgumentsParser(_fileService.Object);
+            var result = service.Parse(args);
+
+            Assert.Null(result.BlockSize);
+        }
     }
 }

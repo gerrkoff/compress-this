@@ -14,14 +14,14 @@ namespace CompressThis
         
         public static int Main(string[] args)
         {
-            var isParseArgumentsSucceed = ParseArguments(args, out Arguments arguments);
-            if (!isParseArgumentsSucceed)
+            var isParseArgumentsSuccess = ParseArguments(args, out Arguments arguments);
+            if (!isParseArgumentsSuccess)
                 return 1;
 
             ICompressor compressor = CreateCompressor(arguments);
             
-            var isRunSucceed = Run(compressor, arguments);
-            if (!isRunSucceed)
+            var isRunSuccess = Run(compressor, arguments);
+            if (!isRunSuccess)
                 return 1;
 
             Ui.PrintFinish();
@@ -58,6 +58,8 @@ namespace CompressThis
                 new FileService(),
                 new CompressionMetaDataService(),
                 new ThreadPool());
+            if (arguments.BlockSize.HasValue)
+                compressor.BlockSize = arguments.BlockSize.Value;
             compressor.ProgressUpdated += (sender, eventArgs) => Ui.UpdateProgressBar(eventArgs.Completed);
             Ui.PrintProgressBar();
             return compressor;
